@@ -33,7 +33,16 @@ const InputField = (props) => {
 			localStorage.setItem(props.id, event.target.value);
 		}
 
-		if (props.onChange) props.onChange(event);
+		const refuse = (alternative) => {
+			setState({
+				name: alternative,
+			});
+			if (props.id) {
+				localStorage.setItem(props.id, alternative);
+			}
+		};
+
+		if (props.onChange) props.onChange(event, refuse);
 	};
 
 	const onBlur = (event) => {
@@ -81,7 +90,7 @@ const InputField = (props) => {
 				onBlur={onBlur.bind(this)}
 				onFocus={props.onFocus}
 				onKeyDown={props.onKeyDown}
-				onKeyDown={(event) => props.onKeyUp(event, state.name)}
+				// onKeyUp={(event) => props.onKeyUp(event, state.name)}
 				value={state.name}
 				style={{
 					...props.inputStyle,
@@ -97,7 +106,7 @@ const InputField = (props) => {
 					whiteSpace: 'nowrap',
 					overflow: 'hidden',
 				}}
-				autofocus={props.autofocus || false}
+				autoFocus={props.autofocus || false}
 			></input>
 			{props.underline ? (
 				<div

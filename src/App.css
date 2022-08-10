@@ -5,9 +5,10 @@
 
 @font-face {
 	font-family: 'icomoon';
-	src: url('fonts/icomoon.eot?29fqx');
-	src: url('fonts/icomoon.eot?29fqx#iefix') format('embedded-opentype'), url('fonts/icomoon.ttf?29fqx') format('truetype'), url('fonts/icomoon.woff?29fqx') format('woff'),
-		url('fonts/icomoon.svg?29fqx#icomoon') format('svg');
+	/* src: url('fonts/icomoon.eot?29fqx'); */
+	/* src: url('fonts/icomoon.eot?29fqx#iefix') format('embedded-opentype'), url('fonts/icomoon.ttf?29fqx') format('truetype'), url('fonts/icomoon.woff?29fqx') format('woff'), */
+	/* url('fonts/icomoon.svg?29fqx#icomoon') format('svg'); */
+	src: url('fonts/icomoon.ttf') format('truetype');
 	font-weight: normal;
 	font-style: normal;
 	font-display: block;
@@ -68,6 +69,12 @@
 	-moz-user-drag: none;
 	-o-user-drag: none;
 	user-drag: none;
+}
+
+.log-content {
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	overflow: hidden;
 }
 
 .button {

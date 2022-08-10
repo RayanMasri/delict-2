@@ -17,47 +17,25 @@ const app = express();
 const wsServer = new ws.Server({ noServer: true });
 
 let rooms = {
-	lobby: {
-		users: [],
-		data: [],
-	},
-	room: {
-		users: [],
-		data: [],
-	},
+	lobby: [],
+	room: [],
 };
 
-// room object
-// lobby: {
-// 	users: [],
-// 	data: []
-// }
-
-// const getRoomMessage = (room) => {
-// map((user) => {
-// 	return {
-// 		...user,
-// 		socket: user.socket.id,
-// 	})
-const fetchRoomData = (room) => {
+const getRoomMessage = (room) => {
 	return JSON.stringify({
 		event: 'fetch-room',
-		data: {
-			users: rooms[room].users.map((user) => {
-				return {
-					...user,
-					socket: user.socket.id,
-				};
-			}),
-			data: rooms[room].data,
-		},
+		data: rooms[room].map((user) => {
+			return {
+				...user,
+				socket: user.socket.id,
+			};
+		}),
 	});
 };
 
 // check if clients have sent pings in the last 30 seconds
 const interval = setInterval(() => {
 	Object.values(rooms)
-		.map((room) => room.users)
 		.flat(2)
 		.map((user) => {
 			if (user.socket.alive === false) {
@@ -66,16 +44,16 @@ const interval = setInterval(() => {
 				Object.keys(rooms).map((key) => {
 					let room = rooms[key];
 
-					for (let i = 0; i < room.users.length; i++) {
-						let _user = room.users[i];
+					for (let i = 0; i < room.length; i++) {
+						let _user = room[i];
 
 						if (_user.socket.id == user.socket.id) {
 							// remove the client from the room
-							rooms[key].users.splice(i, 1);
+							rooms[key].splice(i, 1);
 
 							// inform all other clients
-							rooms[key].users.map((__user) => {
-								__user.socket.send(fetchRoomData(key));
+							rooms[key].map((__user) => {
+								__user.socket.send(getRoomMessage(key));
 							});
 							break;
 						}
@@ -105,24 +83,6 @@ wsServer.on('open', () => {
 });
 
 wsServer.on('connection', (socket) => {
-	// rooms object structure
-	// {
-	// 	lobby: {
-	// 		users: [
-	// 			{
-	// 				socket: SOCKET_OBJECT,
-	// 				position: { x: 0, y: 0 },
-	// 				name: 'john'
-	// 			}
-	// 		],
-	// 		data: [
-	// 			?
-	// 		]
-	// 	},
-	// 	room1: { users: [...], data: [...]},
-	// 	room2: { users: [...], data: [...]},
-	// }
-
 	socket.alive = true;
 
 	socket.send(
@@ -133,20 +93,20 @@ wsServer.on('connection', (socket) => {
 	);
 
 	socket.on('message', (data) => {
-		msg = JSON.parse(data.toString());
+		data = JSON.parse(data.toString());
 
-		switch (msg.event) {
+		switch (data.event) {
 			case 'ping':
 				socket.alive = true;
 				break;
 			case 'connect':
-				// console.log(msg);
+				// console.log(data);
 				socket.alive = true;
-				socket.id = msg.id;
+				socket.id = data.id;
 
-				if (Object.keys(rooms).includes(msg.room)) {
-					for (let [room, roomData] of Object.entries(rooms)) {
-						roomData.users
+				if (Object.keys(rooms).includes(data.room)) {
+					Object.entries(rooms).map(([room, users]) => {
+						users
 							.filter((user) => user.socket.id == socket.id)
 							.map((user, index) => {
 								user.socket.send(
@@ -157,63 +117,39 @@ wsServer.on('connection', (socket) => {
 								);
 								console.log(`disconnect ${socket.id}`);
 
-								rooms[room].users.splice(index, 1);
+								rooms[room].splice(index, 1);
 							});
-					}
+					});
 
-					rooms[msg.room].users.push({
+					rooms[data.room].push({
 						socket: socket,
 						position: {
 							x: 0,
 							y: 0,
 						},
-						name: msg.name,
 					});
-
-					rooms[msg.room].users.map((user) => {
-						user.socket.send(fetchRoomData(msg.room));
+					rooms[data.room].map((user) => {
+						user.socket.send(getRoomMessage(data.room));
 					});
 				} else {
 					socket.send(
 						JSON.stringify({
 							event: 'error',
-							error: `Room "${msg.room}" does not exist`,
+							error: `Room "${data.room}" does not exist`,
 						})
 					);
 				}
 				break;
-			case 'rename':
-				// find which room contains user with matching socket id
-				for (let [room, roomData] of Object.entries(rooms)) {
-					let userIndex = roomData.users.findIndex((user) => user.socket.id == msg.id);
-					if (userIndex > -1) {
-						// change user name in room
-						rooms[room].users[userIndex].name = msg.name;
-						// update room data to all users except renamed
-						rooms[room].users.map((user) => {
-							// send room data with function (replace socket objects with socket id only)
-
-							if (user.socket.id != msg.id) {
-								user.socket.send(fetchRoomData(room));
-							}
-						});
-						break;
-					}
-				}
-				break;
 			case 'move':
-				// if room doesn't exist, otherwise there will be an error
-				if (!Object.keys(rooms).includes(msg.room)) return;
-
 				// find user index
-				let userIndex = rooms[msg.room].users.findIndex((user) => user.socket.id == msg.id);
+				let userIndex = rooms[data.room].findIndex((user) => user.socket.id == data.id);
 				if (userIndex > -1) {
-					rooms[msg.room].users[userIndex].position = msg.position;
+					rooms[data.room][userIndex].position = data.position;
 					// get all users except sender
-					rooms[msg.room].users.map((user) => {
-						if (user.socket.id != msg.id) {
+					rooms[data.room].map((user) => {
+						if (user.socket.id != data.id) {
 							// send them room data
-							user.socket.send(fetchRoomData(msg.room));
+							user.socket.send(getRoomMessage(data.room));
 						}
 					});
 				}

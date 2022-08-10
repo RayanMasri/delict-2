@@ -38,17 +38,16 @@ const Grid = (props) => {
 				}
 
 				return (
-					<div style={style} key={`key-${index}`}>
-						{group.map((child, index) => {
-							if (index >= group.length - 1) return child;
+					<div style={style} key={`${props.id}-${index}`}>
+						{group.map((child, _index) => {
+							if (_index >= group.length - 1) return child;
 							if (React.isValidElement(child)) {
 								let style = child.props.style || {};
 
 								style[comparisons[props.groupDirection || 'column']] = props.spacing;
-
-								return React.cloneElement(child, { style: style });
+								return <React.Fragment key={`${props.id}-${index}-${_index}`}>{React.cloneElement(child, { style: style })}</React.Fragment>;
 							}
-							return child;
+							return <React.Fragment key={`${props.id}-${index}-${_index}`}>{child}</React.Fragment>;
 						})}
 					</div>
 				);

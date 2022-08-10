@@ -3,16 +3,24 @@ import React from 'react';
 const Circle = (props) => {
 	return (
 		<svg
+			// viewBox={`-${props.childSize / 8} -${props.childSize / 8} 40.5 40.5`}
+			// viewBox={`-${props.childSize / 8} -${props.childSize / 8} 40.5 40.5`}
 			ref={props.ref}
 			width={props.size}
 			height={props.size}
 			style={props.style}
+			// style={{
+			// ...props.style,
+			// backgroundColor: 'blue',
+			// }}
 			onClick={props.onClick}
 			// onMouseEnter={onMouseEnter.bind(this)}
 			// onMouseLeave={onMouseLeave.bind(this)}
 			className={props.className}
 		>
+			{/* <circle cx={props.size / 2 - props.childSize / 8} cy={props.size / 2 - props.childSize / 8} r={props.size / 2} fill={props.color}></circle> */}
 			<circle cx={props.size / 2} cy={props.size / 2} r={props.size / 2} fill={props.color}></circle>
+			{/* <circle r={props.size / 2} fill={props.color}></circle> */}
 			{props.children}
 		</svg>
 	);

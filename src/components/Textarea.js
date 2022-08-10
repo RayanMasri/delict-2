@@ -1,27 +1,11 @@
 import React, { useState, useEffect } from 'react';
 
-const useActiveElement = () => {
-	const [active, setActive] = useState(document.activeElement);
-
-	const handleFocusIn = (e) => {
-		setActive(document.activeElement);
-	};
-
-	useEffect(() => {
-		document.addEventListener('focusin', handleFocusIn);
-		return () => {
-			document.removeEventListener('focusin', handleFocusIn);
-		};
-	}, []);
-
-	return active;
-};
+// create a cotnext for textarea
 
 const Textarea = (props) => {
 	const [state, setState] = useState({
 		name: props.id ? localStorage.getItem(props.id) || '' : '',
 	});
-	const focusedElement = useActiveElement();
 	const input = React.useRef(null);
 
 	const onChange = (event) => {
@@ -109,6 +93,7 @@ const Textarea = (props) => {
 					whiteSpace: 'nowrap',
 					overflow: 'hidden',
 				}}
+				className={props.className}
 			></textarea>
 			{props.underline ? (
 				<div

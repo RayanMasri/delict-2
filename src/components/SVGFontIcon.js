@@ -12,8 +12,10 @@ const SVGFontIcon = (props) => {
 				fontFamily: 'icomoon',
 				fill: props.color,
 				fontSize: props.size,
+				backgroundColor: 'blue',
 			}}
 			transform={props.transform || 'translate(0, 5)'}
+			opacity={props.opacity}
 		>
 			{props.unicode}
 		</text>
