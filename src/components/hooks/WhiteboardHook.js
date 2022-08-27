@@ -15,14 +15,7 @@ export default function useWhiteboard() {
 		anchor.click();
 	};
 
-	const calculateTextWidth = (text, size, font = 'Arial') => {
-		let context = document.querySelector('.main-canvas').getContext('2d');
-		context.font = `${size}px ${font}`;
-		return context.measureText(text).width;
-	};
-
 	return {
 		downloadCanvas,
-		calculateTextWidth,
 	};
 }

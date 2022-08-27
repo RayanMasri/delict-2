@@ -8,6 +8,8 @@ import useUtilityHook from './hooks/UtilityHook.jsx';
 import { useControlContext } from './contexts/ControlContext.jsx';
 import { useWebSocketContext } from './contexts/WebSocketContext.jsx';
 
+import calculateTextWidth from 'calculate-text-width';
+
 //  create a utility jaascript file with functions of paper as a class maybe (imported here)
 // add grid button that turns of an onn with icon
 // add zoom button that turns of an onn with icon
@@ -96,7 +98,7 @@ const Whiteboard = (props) => {
 	const { control, setControl } = useControlContext();
 	const { sendDataToServer, uuid } = useWebSocket();
 	const { isMouseOverControl, positionOverRect } = useControl();
-	const { calculateTextWidth } = useWhiteboard();
+	// const { calculateTextWidth } = useWhiteboard();
 	const { isMouseEventLeftClick } = useUtilityHook();
 	const maxSize = 10;
 
@@ -130,7 +132,7 @@ const Whiteboard = (props) => {
 					.split('\n')
 					.map((line, index) => {
 						let rectangle = new Paper.Shape.Rectangle({
-							width: calculateTextWidth(line.trimEnd(), textGroup.fontSize),
+							width: calculateTextWidth(line.trimEnd(), `${textGroup.fontSize}px Arial`),
 							height: content.fontSize + textGroup.data.highlightPadding,
 							fillColor: 'black',
 							opacity: 0,
@@ -173,11 +175,6 @@ const Whiteboard = (props) => {
 			.map((x) => `"${x.className.toLowerCase().includes('text') ? 'text' : x.className.toLowerCase()}-${x.id} (${x.data.tag || ''}) (${x.data.presence || ''})"`)
 			.join(', ');
 	};
-
-	// const calculateTextWidth = (text, size) => {
-	// 	context.current.font = `${size}px Arial`;
-	// 	return context.current.measureText(text).width;
-	// };
 
 	const setBlinker = (bool) => {
 		if (_state.current.blinkerInterval) clearInterval(_state.current.blinkerInterval);
@@ -680,7 +677,7 @@ const Whiteboard = (props) => {
 
 			let blinkerStart = new Paper.Point(
 				text.children.content.bounds.leftCenter.x +
-					calculateTextWidth(content.split('\n')[line].slice(0, selectionStart - (previousLines.length + previousLines.join('').length)), text.children.content.fontSize),
+					calculateTextWidth(content.split('\n')[line].slice(0, selectionStart - (previousLines.length + previousLines.join('').length)), `${text.children.content.fontSize}px Arial`),
 				text.data.origin.y - text.data.highlightPadding + (text.children.content.fontSize + text.data.lineHeight) * line
 			);
 
@@ -739,11 +736,11 @@ const Whiteboard = (props) => {
 					highlightText.opacity = 1;
 
 					let position = new Paper.Point(
-						text.children.content.bounds.leftCenter.x + calculateTextWidth(line.slice(0, start), text.children.content.fontSize),
+						text.children.content.bounds.leftCenter.x + calculateTextWidth(line.slice(0, start), `${text.children.content.fontSize}px Arial`),
 						text.data.origin.y - text.data.highlightPadding + (text.children.content.fontSize + text.data.lineHeight) * i
 					);
 
-					highlight.size.width = calculateTextWidth(_content.replace('\n', 't'), text.children.content.fontSize);
+					highlight.size.width = calculateTextWidth(_content.replace('\n', 't'), `${text.children.content.fontSize}px Arial`);
 					highlight.bounds.topLeft.set(position);
 
 					highlightText.content = '\n'.repeat(i) + _content;
@@ -1277,7 +1274,7 @@ const Whiteboard = (props) => {
 				let group = new Paper.Group({
 					children: [
 						new Paper.Shape.Rectangle({
-							size: new Paper.Size(calculateTextWidth(name, 12, 'JannaLT') + rectSpacing * 2, 19),
+							size: new Paper.Size(calculateTextWidth(name, '12px JannaLT') + rectSpacing * 2, 19),
 							radius: 7,
 							fillColor: '#444444',
 						}),
@@ -1315,7 +1312,7 @@ const Whiteboard = (props) => {
 				// console.log(Paper.project.layers.network.children);
 				// console.log(Paper.project.layers.network.children);
 				let rect = Paper.project.layers.network.children[rectIndex];
-				rect.children[0].size = new Paper.Size(calculateTextWidth(name, 12, 'JannaLT') + rectSpacing * 2, 19);
+				rect.children[0].size = new Paper.Size(calculateTextWidth(name, '12px JannaLT') + rectSpacing * 2, 19);
 				rect.children[1].content = name;
 
 				rect.children[0].bounds.topLeft.set(new Paper.Point(0, 0));
