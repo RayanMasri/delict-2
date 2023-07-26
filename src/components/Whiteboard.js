@@ -544,7 +544,7 @@ const Whiteboard = (props) => {
 				_state.path.add(Paper.view.viewToProject(new Paper.Point(event.clientX, event.clientY)));
 
 				// to be able to draw points
-				if (_state.path.segments.length > 2) _state.path.simplify(10);
+				// if (_state.path.segments.length > 2) _state.path.simplify(10);
 				break;
 			case 'ruler':
 				_state.path.add(Paper.view.viewToProject(new Paper.Point(event.clientX, event.clientY)));

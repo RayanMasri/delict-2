@@ -16,6 +16,8 @@ import { LogContextProvider } from './components/contexts/LogContext.jsx';
 
 // DONT FORGET TO RE ENABLE MOVEMENT SENDING MESSAGES FROM CLIENT BEFORE PUBLICHSING
 
+// option to toggle smooth line correction in pencils
+
 // optimization bugs:
 // using the method to reset event listeners everytime the state has changed: (* fixed: issue was because it was running from its own event listener, not from contrl's event listener i dont know why)
 // when using the mousedown and mousemove event listener, and when holding the mouse and immediately moving, will run both mousedown and mousemove before resetting event listeners
